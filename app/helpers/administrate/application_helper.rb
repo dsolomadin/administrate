@@ -2,6 +2,16 @@ module Administrate
   module ApplicationHelper
     def render_field(field, locals = {})
       locals.merge!(field: field)
+      if field.class.field_type == "has_one"
+        resolver = Administrate::ResourceResolver.new(
+          "admin/#{field.attribute}"
+        )
+        page = Administrate::Page::Form.new(
+          resolver.dashboard_class.new,
+          resolver.resource_class.new,
+        )
+        locals[:page] = page
+      end
       render locals: locals, partial: field.to_partial_path
     end
 
